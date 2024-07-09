@@ -1,0 +1,59 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Game {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  startTime DateTime?
+  endTime   DateTime?
+  gameType  String?
+  actions   Action[]
+}
+
+model Player {
+  id              String            @id @default(cuid())
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  name            String?
+  balance         Float?
+  status          EnumPlayerStatus?
+  actions         Action[]
+  statisticsItems Statistics[]
+}
+
+model Action {
+  id         String                @id @default(cuid())
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt
+  actionType EnumActionActionType?
+  amount     Float?
+  game       Game?                 @relation(fields: [gameId], references: [id])
+  gameId     String?
+  player     Player?               @relation(fields: [playerId], references: [id])
+  playerId   String?
+}
+
+model Statistics {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  gamesPlayed   Int?
+  totalWinnings Float?
+  player        Player?  @relation(fields: [playerId], references: [id])
+  playerId      String?
+}
+
+enum EnumPlayerStatus {
+  Option1
+}
+
+enum EnumActionActionType {
+  Option1
+}
